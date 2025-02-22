@@ -232,13 +232,15 @@ def predict_current_day_with_sentiment(table_name, ticker_symbol):
     adjusted_prediction = prediction_normalized * sentiment_multiplier
 
     print("\nAdjusted Risk Factor with Sentiment Multiplier:")
+    #return adjusted_prediction
     print(adjusted_prediction)
+    return adjusted_prediction
     
     
 
 # Main function to execute everything end-to-end for a given ticker symbol
-def main():
-    ticker_symbol = input("Enter the ticker symbol: ").upper()
+def main(ticker_symbol):
+    
     
     table_name_for_ticker = f"{ticker_symbol}_StockData"
     
@@ -262,8 +264,8 @@ def main():
 
     print("\nTesting the trained model with sentiment adjustment...")
     
-    predict_current_day_with_sentiment(table_name_for_ticker, ticker_symbol)
-
+    return predict_current_day_with_sentiment(table_name_for_ticker, ticker_symbol)
+    
 
 if __name__ == "__main__":
     main()

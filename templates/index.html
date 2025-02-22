@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Analysis Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input {
+            padding: 5px;
+        }
+        button {
+            padding: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #risk-number {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Risk Analysis Tool</h1>
+
+    <!-- Form to take ticker symbol input -->
+    <form id="ticker-form">
+        <label for="ticker">Enter Ticker Symbol: </label>
+        <input type="text" id="ticker" name="ticker" required>
+        <button type="submit">Analyze</button>
+    </form>
+    
+    <h2>Risk Number: <span id="risk-number"></span></h2>
+
+    <script>
+        // Listen for the form submission
+        document.getElementById('ticker-form').addEventListener('submit', async function(event) {
+            event.preventDefault();  // Prevent form from reloading the page
+
+            const ticker = document.getElementById('ticker').value;
+
+            try {
+                // Send ticker symbol to the Flask API using POST request
+                const response = await fetch('/api/calculate_risk', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ticker: ticker }),  // Send JSON data
+                });
+
+                // Parse the JSON response from Flask API
+                const data = await response.json();
+
+                // If the response contains a risk number, display it
+                if (data.risk_number) {
+                    document.getElementById('risk-number').textContent = data.risk_number;
+                } else {
+                    // Display an error message if no risk number is found
+                    document.getElementById('risk-number').textContent = data.error || 'Error occurred.';
+                }
+
+            } catch (error) {
+                // Handle fetch-related errors
+                document.getElementById('risk-number').textContent = 'Failed to fetch data.';
+            }
+        });
+    </script>
+</body>
+</html>

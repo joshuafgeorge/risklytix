@@ -1,6 +1,7 @@
 import boto3
 import yfinance as yf
 from datetime import datetime
+from decimal import Decimal  # Import Decimal
 
 # Initialize DynamoDB client
 dynamodb = boto3.resource('dynamodb')
@@ -16,13 +17,13 @@ data = stock.history(period="1d")
 for index, row in data.iterrows():
     table.put_item(
         Item={  
-            "ticker": ticker,  # Corrected key name to 'ticker'
+            "ticker": ticker,
             "Date": index.strftime("%Y-%m-%d"),
-            "Open": int(row["Open"]),
-            "High": int(row["High"]),
-            "Low": int(row["Low"]),
-            "Close": int(row["Close"]),
-            "Volume": int(row["Volume"]),
+            "Open": Decimal(str(row["Open"])),   # Convert float to Decimal
+            "High": Decimal(str(row["High"])),
+            "Low": Decimal(str(row["Low"])),
+            "Close": Decimal(str(row["Close"])),
+            "Volume": int(row["Volume"]),  # Keep Volume as int
         }
     )
 

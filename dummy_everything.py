@@ -185,7 +185,7 @@ def predict_current_day(table_name):
 
     print("\nPredicted Risk Factor (Normalized) for Current Day:")
     
-    print(prediction_normalized)
+    
 
 # Main function to execute everything end-to-end for a given ticker symbol
 def main():

@@ -1,4 +1,4 @@
-# My Project
+# risklytix
 
 ## Overview
 This project is designed to provide a robust application structure using TypeScript. It includes a main entry point and type definitions to ensure type safety throughout the application.

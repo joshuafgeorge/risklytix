@@ -1,24 +1,25 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./App.css";
+import RiskScore from "./RiskScore";
+import RiskChart from "./RiskChart";
+import HistoricalGraphs from "./HistoricalGraphs";
+import SentimentQuadrant from "./SentimentQuadrant"; // Updated to use the quadrant
 
 function App() {
-  const [ticker, setTicker] = useState(""); // State for ticker input
-  const [riskNumber, setRiskNumber] = useState(null); // State for risk number result
-  const [error, setError] = useState(null); // State for error messages
+  const [ticker, setTicker] = useState("");
+  const [riskData, setRiskData] = useState(null);
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setRiskNumber(null); // Reset previous results
+    setRiskData(null);
     setError(null);
 
     try {
-      // Send ticker symbol to Flask API
       const response = await axios.post("http://127.0.0.1:5000/api/calculate_risk", { ticker });
 
-      // If Flask responds with a risk number, display it
       if (response.data.risk_number) {
-        setRiskNumber(response.data.risk_number);
+        setRiskData(response.data);
       } else {
         setError(response.data.error || "An error occurred.");
       }
@@ -28,34 +29,23 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Risk Analysis Tool</h1>
-        <form onSubmit={handleSubmit} className="form">
-          <label htmlFor="ticker">Enter Ticker Symbol:</label>
-          <input
-            type="text"
-            id="ticker"
-            value={ticker}
-            onChange={(e) => setTicker(e.target.value)}
-            placeholder="e.g., AAPL"
-            required
-          />
-          <button type="submit">Analyze</button>
-        </form>
+    <div style={{ textAlign: "center", padding: "20px", backgroundColor: "#212121", minHeight: "100vh", color: "#fff" }}>
+      <h1>Risklytix Dashboard</h1>
+      <form onSubmit={handleSubmit}>
+        <input type="text" value={ticker} onChange={(e) => setTicker(e.target.value)} placeholder="Enter Ticker Symbol" />
+        <button type="submit">Analyze</button>
+      </form>
 
-        {riskNumber !== null && (
-          <div className="result">
-            <h2>Risk Number: {riskNumber}</h2>
-          </div>
-        )}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-        {error && (
-          <div className="error">
-            <p>{error}</p>
-          </div>
-        )}
-      </header>
+      {riskData && (
+        <>
+          <RiskScore risk={riskData.risk_number} />
+          <RiskChart historicalData={riskData.historical_data} futureRisk={riskData.future_risk} />
+          <HistoricalGraphs historicalData={riskData.historical_data} />
+          <SentimentQuadrant sentimentScore={riskData.sentiment_score} />
+        </>
+      )}
     </div>
   );
 }
